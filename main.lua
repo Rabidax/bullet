@@ -20,7 +20,6 @@ function love.update(dt)
 	-- -- HACK: for hotswapping during dev
 	-- require("lurker").update()
 
-	-- FIX: enemies all spawn at the same pos
 	if love.timer.getTime() - LastSpawnTime > Enemy.spawn_time then
 		Enemies[#Enemies + 1] = Enemy:new(Width, Height)
 		LastSpawnTime = love.timer.getTime()

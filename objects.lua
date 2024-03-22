@@ -33,7 +33,6 @@ function enemy.randomize_pos(w, h)
 	end
 	return { x = x, y = y }
 end
--- FIX:
 function enemy.init_shooting_angle(pos_x, pos_y, w, h)
 	-- everything here is in screen centered coords
 	local x, y = pos_x, pos_y
