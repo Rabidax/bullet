@@ -11,22 +11,17 @@ local bullet = {
 }
 
 local enemy = { time_since_shot = 0.0, shooting_delay = 1.0, spawn_time = 2.0 }
----Initialize an enemy object
----To be used right after enemy:new()
-function enemy:spawn(width, height)
-	-- FIX: Init pos at random on screen's edge
-	self.pos = { x = -width / 2, y = -height / 2 }
-	-- FIX: Init firing angle, depends on pos
-	self.shooting_angle = math.atan2(height, width)
-	self.remaining = 20
-	return self
-end
 
----Creates a new enemy instance
-function enemy:new(o)
-	o = o or {}
-	self.__index = self
-	return setmetatable(o, self)
+local enemy = {}
+function enemy.new(w, h)
+	local bare = { time_since_shot = 0.0, shooting_delay = 1.0, spawn_time = 2.0, width = 400, height = 400 }
+
+	-- FIX: Init pos at random on screen's edge
+	-- FIX: Init firing angle, depends on pos
+	bare.pos = { x = -w / 2, y = -h / 2 }
+	bare.shooting_angle = math.atan2(h, w)
+	bare.remaining = 20
+	return bare
 end
 
 local ship = { health = 100, orientation = 1, step = 10 }
