@@ -1,27 +1,35 @@
 local bullet = {
-	new = function(pos, angle, color)
-		return {
+	new = function(self, pos, angle, color)
+		local o = {
 			pos = pos,
 			angle = angle,
 			vector = { x = math.cos(angle), y = math.sin(angle) },
-			color = color, -- TODO: implement color for bullets
+			-- TODO: implement color for bullets
+			color = color,
 			speed = 1,
 		}
+		self.__index = self
+		return setmetatable(o, self)
 	end,
 }
 
-local enemy = { time_since_shot = 0.0, shooting_delay = 1.0, spawn_time = 2.0 }
-
 local enemy = {}
-function enemy.new(w, h)
+function enemy:new(w, h)
 	local bare = { time_since_shot = 0.0, shooting_delay = 1.0, spawn_time = 2.0, width = 400, height = 400 }
+
+	self.__index = self
+	setmetatable(bare, self)
 
 	-- FIX: Init pos at random on screen's edge
 	-- FIX: Init firing angle, depends on pos
-	bare.pos = { x = -w / 2, y = -h / 2 }
-	bare.shooting_angle = math.atan2(h, w)
-	bare.remaining = 20
+	self.pos = { x = -w / 2, y = -h / 2 }
+	self.shooting_angle = math.atan2(h, w)
+	self.remaining = 20
+
 	return bare
+end
+function enemy:get_pos()
+	return { x = self.pos.x, y = self.pos.y }
 end
 
 local ship = { health = 100, orientation = 1, step = 10 }

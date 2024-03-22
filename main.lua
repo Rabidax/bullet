@@ -11,7 +11,7 @@ function love.load()
 
 	Ship.sprite = love.graphics.newImage("assets/ship.jpg")
 	Enemies = {}
-	Enemies[1] = Enemy.new(Width, Height)
+	Enemies[1] = Enemy:new(Width, Height)
 	Bullets = {}
 end
 
@@ -24,18 +24,20 @@ function love.update(dt)
 	-- end
 	--
 
+	-- Update enemies
 	for n, enemy in pairs(Enemies) do
 		if enemy.remaining <= 0 then
 			-- remove enemies without bullet
 			table.remove(Enemies, n)
 		elseif love.timer.getTime() - enemy.time_since_shot > enemy.shooting_delay then
 			-- shoot
-			Bullets[#Bullets + 1] = Bullet.new(enemy.pos, enemy.shooting_angle, { math.random(), math.random(), 0 })
+			Bullets[#Bullets + 1] = Bullet:new(enemy:get_pos(), enemy.shooting_angle)
 			enemy.remaining = enemy.remaining - 1
 			enemy.time_since_shot = love.timer.getTime()
 		end
 	end
-	-- FIX: Bullets all have the same pos : Enemies[1].pos
+
+	-- Update bullets
 	local width = Ship.sprite:getWidth()
 	local height = Ship.sprite:getHeight()
 	local min_ship_size = math.min(width / 2, height / 2)
@@ -82,9 +84,7 @@ function love.draw()
 	-- Draw all the bullets
 	for _, b in pairs(Bullets) do
 		love.graphics.translate(Width / 2, Height / 2)
-		love.graphics.setColor(b.color)
 		love.graphics.circle("fill", b.pos.x, b.pos.y, 2)
-		love.graphics.setColor(1, 1, 1)
 		love.graphics.origin()
 	end
 end
