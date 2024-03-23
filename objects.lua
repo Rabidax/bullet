@@ -1,11 +1,9 @@
-local utils = require("utils")
 local bullet = {
 	new = function(self, pos, angle, color)
 		local o = {
 			pos = pos,
 			angle = angle,
 			vector = { x = math.cos(angle), y = math.sin(angle) },
-			-- TODO: implement color for bullets
 			color = color,
 			speed = 1,
 		}
@@ -15,7 +13,7 @@ local bullet = {
 }
 
 local enemy = {
-	spawn_time = 0.35,
+	spawn_time = 2,
 }
 -- everything here is in screen centered coords
 function enemy.randomize_pos(w, h)
@@ -41,10 +39,11 @@ function enemy:new(w, h, pos)
 	local position = pos or enemy.randomize_pos(w, h)
 	local bare = {
 		time_since_shot = 0.0,
-		shooting_delay = 0.5,
+		shooting_delay = 1,
 		pos = position,
 		shooting_angle = enemy.init_shooting_angle(position.x, position.y),
 		remaining = 20,
+		color = math.random(2),
 	}
 
 	self.__index = self

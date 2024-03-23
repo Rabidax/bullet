@@ -9,16 +9,18 @@ function love.load()
 	Enemy = require("objects").enemy
 	Bullet = require("objects").bullet
 
-	Ship.sprite = love.graphics.newImage("assets/ship.jpg")
+	Ship.sprite = love.graphics.newImage("assets/ship_tmp.jpg")
 	Enemies = {}
 	Bullets = {}
+
+	Colors = { { 1, 1, 1 }, { 1, 0, 0 } }
 
 	Debug = false
 end
 
 function love.update(dt)
-	-- -- HACK: for hotswapping during dev
-	-- require("lurker").update()
+	-- HACK: for hotswapping during dev
+	require("lurker").update()
 
 	-- NOTE: all enemies share the same spawn time
 	if love.timer.getTime() - LastSpawnTime > Enemy.spawn_time then
@@ -38,7 +40,7 @@ function love.update(dt)
 				table.remove(Enemies, n)
 			elseif love.timer.getTime() - enemy.time_since_shot > enemy.shooting_delay then
 				-- shoot
-				Bullets[#Bullets + 1] = Bullet:new(enemy:get_pos(), enemy.shooting_angle)
+				Bullets[#Bullets + 1] = Bullet:new(enemy:get_pos(), enemy.shooting_angle, enemy.color)
 				enemy.remaining = enemy.remaining - 1
 				enemy.time_since_shot = love.timer.getTime()
 			end
@@ -57,7 +59,7 @@ function love.update(dt)
 			b.pos.x = b.pos.x + b.speed * b.vector.x
 			b.pos.y = b.pos.y + b.speed * b.vector.y
 		else
-			Ship.health = Ship.health - 1
+			-- Ship.health = Ship.health - 1
 			table.remove(Bullets, n)
 			-- love.event.quit()
 		end
@@ -101,6 +103,7 @@ function love.draw()
 
 	for _, e in pairs(Enemies) do
 		love.graphics.translate(Width / 2, Height / 2)
+		love.graphics.setColor(Colors[e.color])
 		love.graphics.circle("fill", e.pos.x, e.pos.y, 8)
 		love.graphics.line(
 			e.pos.x,
@@ -108,6 +111,7 @@ function love.draw()
 			e.pos.x + 20 * math.cos(e.shooting_angle),
 			e.pos.y + 20 * math.sin(e.shooting_angle)
 		)
+		love.graphics.setColor(1, 1, 1)
 		love.graphics.origin()
 	end
 
@@ -117,7 +121,9 @@ function love.draw()
 			table.remove(Bullets, n)
 		else
 			love.graphics.translate(Width / 2, Height / 2)
+			love.graphics.setColor(Colors[b.color])
 			love.graphics.circle("fill", b.pos.x, b.pos.y, 2)
+			love.graphics.setColor(1, 1, 1)
 			love.graphics.origin()
 		end
 	end
