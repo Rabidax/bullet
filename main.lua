@@ -141,5 +141,7 @@ function love.keyreleased(key)
 		love.event.quit()
 	elseif key == "f" then
 		Ship.turn()
+	elseif key == "d" then
+		Ship.turn(-1)
 	end
 end

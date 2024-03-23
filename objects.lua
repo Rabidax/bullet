@@ -59,8 +59,9 @@ local ship = { health = 100, orientation = 1, step = 10 }
 
 ---turn ship
 ---default is pi/2 clockwise
-function ship.turn()
-	ship.orientation = ship.orientation % 4 + 1
+function ship.turn(w)
+	local way = w or 1
+	ship.orientation = ship.orientation % 4 + way
 end
 
 return { ship = ship, bullet = bullet, enemy = enemy }
