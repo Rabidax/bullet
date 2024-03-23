@@ -17,12 +17,17 @@ function love.load()
 end
 
 function love.update(dt)
-	-- -- HACK: for hotswapping during dev
-	-- require("lurker").update()
+	-- HACK: for hotswapping during dev
+	require("lurker").update()
 
+	-- NOTE: all enemies share the same spawn time
 	if love.timer.getTime() - LastSpawnTime > Enemy.spawn_time then
 		Enemies[#Enemies + 1] = Enemy:new(Width, Height)
 		LastSpawnTime = love.timer.getTime()
+	end
+
+	if Ship.health <= 0 then
+		love.event.quit("restart")
 	end
 
 	-- Update enemies
@@ -45,19 +50,22 @@ function love.update(dt)
 	local height = Ship.sprite:getHeight()
 	local min_ship_size = math.min(width / 2, height / 2)
 	for n, b in pairs(Bullets) do
+		-- FIX: tighten ship hitbox
 		local bullet_inf_norm = math.max(math.abs(b.pos.x), math.abs(b.pos.y))
 		-- if bullet not reached player, progress, else quit
 		if bullet_inf_norm >= min_ship_size then
 			b.pos.x = b.pos.x + b.speed * b.vector.x
 			b.pos.y = b.pos.y + b.speed * b.vector.y
 		else
+			Ship.health = Ship.health - 1
+			table.remove(Bullets, n)
 			-- love.event.quit()
 		end
 	end
 end
 function love.draw()
 	-- Instructions
-	local instructions = "F : turn | Q : quit"
+	local instructions = "F : turn | Q : quit" .. "\n" .. "Health : " .. Ship.health
 	love.graphics.print(instructions)
 	local debug = #Enemies
 		.. " active enemies, they have "

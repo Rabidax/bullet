@@ -17,6 +17,7 @@ local bullet = {
 local enemy = {
 	spawn_time = 0.35,
 }
+-- everything here is in screen centered coords
 function enemy.randomize_pos(w, h)
 	local x
 	local y
@@ -33,20 +34,16 @@ function enemy.randomize_pos(w, h)
 	end
 	return { x = x, y = y }
 end
-function enemy.init_shooting_angle(pos_x, pos_y, w, h)
-	-- everything here is in screen centered coords
-	local x, y = pos_x, pos_y
-	return math.pi + math.atan2(y, x)
+function enemy.init_shooting_angle(pos_x, pos_y)
+	return math.pi + math.atan2(pos_y, pos_x)
 end
 function enemy:new(w, h, pos)
 	local position = pos or enemy.randomize_pos(w, h)
 	local bare = {
 		time_since_shot = 0.0,
-		shooting_delay = 0.2,
-		-- width = 400,
-		-- height = 400,
+		shooting_delay = 0.5,
 		pos = position,
-		shooting_angle = enemy.init_shooting_angle(position.x, position.y, w, h),
+		shooting_angle = enemy.init_shooting_angle(position.x, position.y),
 		remaining = 20,
 	}
 
