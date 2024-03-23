@@ -80,4 +80,24 @@ function utils.pick(t)
 	end
 end
 
+---Dot product of lists
+---@alias vector table<number, number> list of numbers
+---@param u vector
+---@param v vector
+---@return number
+function utils.dot(u, v)
+	if #u ~= #v then
+		error("vector dimension mismatch")
+	end
+	local prod = {}
+	for i = 1, #u do
+		prod[i] = u[i] * v[i]
+	end
+	return utils.sum(prod, 0)
+end
+
+function utils.dot2(u, v)
+	return utils.dot({ u.x, u.y }, { v.x, v.y })
+end
+
 return utils
