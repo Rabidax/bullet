@@ -17,8 +17,8 @@ function love.load()
 end
 
 function love.update(dt)
-	-- HACK: for hotswapping during dev
-	require("lurker").update()
+	-- -- HACK: for hotswapping during dev
+	-- require("lurker").update()
 
 	-- NOTE: all enemies share the same spawn time
 	if love.timer.getTime() - LastSpawnTime > Enemy.spawn_time then
