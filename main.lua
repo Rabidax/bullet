@@ -54,14 +54,21 @@ function love.update(dt)
 	for n, b in pairs(Bullets) do
 		-- FIX: tighten ship hitbox
 		local bullet_inf_norm = math.max(math.abs(b.pos.x), math.abs(b.pos.y))
-		-- if bullet not reached player, progress, else quit
 		if bullet_inf_norm >= min_ship_size then
+			-- bullet didn't reach player, so move it
 			b.pos.x = b.pos.x + b.speed * b.vector.x
 			b.pos.y = b.pos.y + b.speed * b.vector.y
 		else
-			-- Ship.health = Ship.health - 1
+			-- if bullet isn't eaten, take damage
+			local orientation = math.pi / 2 * (Ship.orientation - 1)
+			local ship_vector = { x = math.cos(orientation), y = math.sin(orientation) }
+			local touched_color = utils.dot2(b.vector, ship_vector) < 0 and 1 or 2
+			local eaten_bullet = touched_color == b.color
+			if not eaten_bullet then
+				Ship.health = Ship.health - 1
+			end
+			-- then remove bullet
 			table.remove(Bullets, n)
-			-- love.event.quit()
 		end
 	end
 end

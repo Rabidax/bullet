@@ -42,7 +42,7 @@ function enemy:new(w, h, pos)
 		shooting_delay = 1,
 		pos = position,
 		shooting_angle = enemy.init_shooting_angle(position.x, position.y),
-		remaining = 20,
+		remaining = 5,
 		color = math.random(2),
 	}
 
@@ -59,9 +59,8 @@ local ship = { health = 100, orientation = 1, step = 10 }
 
 ---turn ship
 ---default is pi/2 clockwise
-function ship.turn(w)
-	local way = w or 1
-	ship.orientation = ship.orientation % 4 + way
+function ship.turn()
+	ship.orientation = ship.orientation % 4 + 1
 end
 
 return { ship = ship, bullet = bullet, enemy = enemy }
