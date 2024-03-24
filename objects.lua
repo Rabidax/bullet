@@ -18,36 +18,45 @@ local enemy = {
 	spawn_time = 2,
 }
 -- everything here is in screen centered coords
-function enemy.randomize_pos(w, h)
+function enemy.randomize_pos(w, h, pos)
 	local x
 	local y
 	local sign = utils.pick({ -1, 1 })
 	local percentage = sign * (math.random() * 0.7 + 0.1)
-	if math.random() < 0.5 then
-		-- pick either top or bottom and randomize x
-		y = utils.pick({ -h / 2, h / 2 })
-		-- avoid spawning in corners
-		x = percentage * w / 2
+	-- TODO: factor enemy pos randomizing
+	if not pos then
+		if math.random() < 0.5 then
+			-- pick either top or bottom and randomize x
+			y = utils.pick({ -h / 2, h / 2 })
+			-- avoid spawning in corners
+			x = percentage * w / 2
+		else
+			-- pick either left or right and randomize y
+			x = utils.pick({ -w / 2, w / 2 })
+			-- avoid spawning in corners
+			y = percentage * h / 2
+		end
 	else
-		-- pick either left or right and randomize y
-		x = utils.pick({ -w / 2, w / 2 })
-		-- avoid spawning in corners
-		y = percentage * h / 2
+		local sides = { w / 2, h / 2, -w / 2, -h / 2 }
+		if pos == 1 or pos == 3 then
+			x = sides[pos]
+			y = percentage * h / 2
+		else
+			y = sides[pos]
+			x = percentage * w / 2
+		end
 	end
 	return { x = x, y = y }
 end
-function enemy.init_shooting_angle(pos_x, pos_y)
-	return math.pi + math.atan2(pos_y, pos_x)
-end
-function enemy:new(w, h, pos)
-	local position = pos or enemy.randomize_pos(w, h)
+function enemy:new(w, h, e)
+	local position = enemy.randomize_pos(w, h, e[1])
 	local bare = {
-		time_since_shot = 0.0,
-		shooting_delay = 1,
 		pos = position,
-		shooting_angle = enemy.init_shooting_angle(position.x, position.y),
-		remaining = 5,
-		color = math.random(2),
+		color = e[2],
+		remaining = e[3],
+		shooting_delay = e[4],
+		time_since_shot = 0.0,
+		shooting_angle = math.pi + math.atan2(position.y, position.x),
 	}
 
 	self.__index = self

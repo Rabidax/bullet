@@ -17,9 +17,11 @@ end
 
 ---Map all values in t to their image through f
 ---Keeps the keys from t
----@param t table
----@param f function
----@return table
+---@generic K
+---@generic T
+---@param t table<K,T>
+---@param f function(value:T):T
+---@return table<K,T>
 function utils.map(t, f)
 	local res = {}
 	for key, value in pairs(t) do

@@ -5,6 +5,7 @@ function love.load()
 
 	-- load objects
 	utils = require("utils")
+	parse_level = require("parser").parse
 	Ship = require("objects").ship
 	Enemy = require("objects").enemy
 	Bullet = require("objects").bullet
@@ -15,19 +16,35 @@ function love.load()
 
 	Colors = { { 1, 1, 1 }, { 1, 0, 0 } }
 
+	Play = false
 	Debug = false
+
+	-- Pick a level
+	-- TODO: implement level choice UI
+	Level = parse_level("lvl_test")
+	Play = true
 end
 
 function love.update(dt)
 	-- HACK: for hotswapping during dev
 	require("lurker").update()
 
-	-- NOTE: all enemies share the same spawn time
-	if love.timer.getTime() - LastSpawnTime > Enemy.spawn_time then
-		Enemies[#Enemies + 1] = Enemy:new(Width, Height)
-		LastSpawnTime = love.timer.getTime()
+	if not Play then
+		return
 	end
 
+	-- TODO: make an iterator for level that returns events in time order
+	for k, events in ipairs(Level) do
+		local time, enemies = unpack(events)
+		if love.timer.getTime() >= time then
+			if not Level[k].done then
+				for _, e in pairs(enemies) do
+					Enemies[#Enemies + 1] = Enemy:new(Width, Height, e)
+				end
+				Level[k].done = true
+			end
+		end
+	end
 	if Ship.health <= 0 then
 		love.event.quit("restart")
 	end
@@ -52,7 +69,7 @@ function love.update(dt)
 	local height = Ship.sprite:getHeight()
 	local min_ship_size = math.min(width / 2, height / 2)
 	for n, b in pairs(Bullets) do
-		-- FIX: tighten ship hitbox
+		-- FIX: tighten ship hitbox ?
 		local bullet_inf_norm = math.max(math.abs(b.pos.x), math.abs(b.pos.y))
 		if bullet_inf_norm >= min_ship_size then
 			-- bullet didn't reach player, so move it

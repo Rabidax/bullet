@@ -1,9 +1,9 @@
 local utils = require("utils")
 local parser = {}
 
----@alias timestamp integer[]
+---@alias timestamp number
 ---@alias enemy number[]
----@alias event {[1]:timestamp, [2]:enemy[]}
+---@alias event {time:timestamp, enemies:enemy[]}
 ---@alias level event[]
 
 ---Read a level file from disk and parse it
@@ -19,6 +19,9 @@ function parser.parse(path)
 			table.insert(lvl, { time, enemies })
 		end
 	end
+	table.sort(lvl, function(a, b)
+		return a[1] < b[1]
+	end)
 	return lvl
 end
 
@@ -32,6 +35,8 @@ function parser.parse_line(l)
 	end
 	---@type timestamp
 	local time = utils.map({ min, sec }, tonumber)
+	-- convert time in seconds
+	time = utils.dot(time, { 60, 1 })
 	-- NOTE: l should begin with 'xx:xx,' hence 7
 	local line_rem = l:sub(7, #l)
 	local enemies = {}
@@ -40,7 +45,7 @@ function parser.parse_line(l)
 	-- single digit "type,
 	-- integer "remaining bullets",
 	-- number "delay"
-	for s, t, r, d in line_rem:gmatch("%((%d),(%d),(%d+),(%d+%.%d+)%),?") do
+	for s, t, r, d in line_rem:gmatch("%((%d),(%d),(%d+),(%d+%.%d+)%)") do
 		if not utils.all({ s, t, r, d }) then
 			error("level parsing error")
 		end
