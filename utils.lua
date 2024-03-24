@@ -73,11 +73,8 @@ function utils.pick(t)
 	elseif #t == 1 then
 		return t[1]
 	end
-	for _, v in pairs(t) do
-		if math.random() < 1 / #t then
-			return v
-		end
-	end
+	local pick = math.floor(#t * math.random() + 1)
+	return t[pick]
 end
 
 ---Dot product of lists
