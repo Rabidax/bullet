@@ -1,3 +1,5 @@
+local utils = require("utils")
+
 local bullet = {
 	new = function(self, pos, angle, color)
 		local o = {
@@ -19,16 +21,18 @@ local enemy = {
 function enemy.randomize_pos(w, h)
 	local x
 	local y
+	local sign = utils.pick({ -1, 1 })
+	local percentage = sign * (math.random() * 0.7 + 0.1)
 	if math.random() < 0.5 then
 		-- pick either top or bottom and randomize x
-		y = math.random() < 0.5 and -h / 2 or h / 2
+		y = utils.pick({ -h / 2, h / 2 })
 		-- avoid spawning in corners
-		x = (math.random() * 1.9 - 1) * w
+		x = percentage * w / 2
 	else
 		-- pick either left or right and randomize y
-		x = math.random() < 0.5 and -w / 2 or w / 2
+		x = utils.pick({ -w / 2, w / 2 })
 		-- avoid spawning in corners
-		y = (math.random() * 1.9 - 1) * h
+		y = percentage * h / 2
 	end
 	return { x = x, y = y }
 end
