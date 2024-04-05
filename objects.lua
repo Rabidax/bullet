@@ -23,28 +23,19 @@ function enemy.randomize_pos(w, h, pos)
 	local y
 	local sign = utils.pick({ -1, 1 })
 	local percentage = sign * (math.random() * 0.7 + 0.1)
-	-- TODO: factor enemy pos randomizing
+
 	if not pos then
-		if math.random() < 0.5 then
-			-- pick either top or bottom and randomize x
-			y = utils.pick({ -h / 2, h / 2 })
-			-- avoid spawning in corners
-			x = percentage * w / 2
-		else
-			-- pick either left or right and randomize y
-			x = utils.pick({ -w / 2, w / 2 })
-			-- avoid spawning in corners
-			y = percentage * h / 2
-		end
+		pos = utils.pick({ 1, 2, 3, 4 })
+	end
+	local sides = { w / 2, h / 2, -w / 2, -h / 2 }
+	if pos == 1 or pos == 3 then
+		-- pos provided is left or right
+		x = sides[pos]
+		y = percentage * h / 2
 	else
-		local sides = { w / 2, h / 2, -w / 2, -h / 2 }
-		if pos == 1 or pos == 3 then
-			x = sides[pos]
-			y = percentage * h / 2
-		else
-			y = sides[pos]
-			x = percentage * w / 2
-		end
+		-- pos provided is top or bottom
+		y = sides[pos]
+		x = percentage * w / 2
 	end
 	return { x = x, y = y }
 end
